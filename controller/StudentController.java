@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.StudentService;
 
-import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("student")
@@ -18,18 +18,18 @@ public class StudentController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Student> getStudent(@PathVariable long id) {
-        Student student = studentService.findStudent(id);
-        if (student == null) {
+    public ResponseEntity<Optional<Student>> getStudent(@PathVariable long id) {
+        Optional<Student> student = studentService.findStudent(id);
+        if (student.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(student);
     }
 
-    @GetMapping("/age/{age}")
-    public ResponseEntity<List<Student>> getStudentByAge(@PathVariable int age) {
-        return ResponseEntity.ok(studentService.getAgeStudents(age));
-    }
+//    @GetMapping("/age/{age}")
+//    public ResponseEntity<List<Student>> getStudentByAge(@PathVariable int age) {
+//        return ResponseEntity.ok(studentService.getAgeStudents(age));
+//    }
 
     @PostMapping()
     public ResponseEntity<Student> postStudent(@RequestBody Student student) {
