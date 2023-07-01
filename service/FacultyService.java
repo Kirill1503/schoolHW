@@ -4,6 +4,8 @@ import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.repository.FacultyRepository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,13 +32,13 @@ public class FacultyService {
         facultyRepository.deleteById(id);
     }
 
-//    public List<Faculty> getColorFaculty(String color) {
-//        List<Faculty> fac = new ArrayList<>();
-//        for (Faculty value : faculties.values()) {
-//            if (value.getColor().equals(color)) {
-//                fac.add(value);
-//            }
-//        }
-//        return fac;
-//    }
+    public List<Faculty> getColorFaculty(String color) {
+        List<Faculty> fac = new ArrayList<>();
+        for (Faculty value : facultyRepository.findAll()) {
+            if (value.getColor().equals(color)) {
+                fac.add(value);
+            }
+        }
+        return fac;
+    }
 }
