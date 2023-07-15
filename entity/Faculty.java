@@ -1,26 +1,18 @@
-package ru.hogwarts.school.model;
+package ru.hogwarts.school.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
 public class Faculty {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private String color;
-
-    public Faculty(Long id, String name, String color) {
-        this.name = name;
-        this.color = color;
-    }
-
-    public Faculty() {
-
-    }
+    @OneToMany(mappedBy = "faculty")
+    private List<Student> students;
 
     @Override
     public boolean equals(Object o) {
@@ -62,5 +54,13 @@ public class Faculty {
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public List<Student> getStudents() {
+        return students;
+    }
+
+    public void setStudents(List<Student> students) {
+        this.students = students;
     }
 }

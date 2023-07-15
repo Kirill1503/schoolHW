@@ -1,13 +1,13 @@
 package ru.hogwarts.school.controller;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.dto.FacultyDtoIn;
+import ru.hogwarts.school.dto.FacultyDtoOut;
+import ru.hogwarts.school.dto.StudentDtoIn;
+import ru.hogwarts.school.dto.StudentDtoOut;
 import ru.hogwarts.school.service.StudentService;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("student")
@@ -18,39 +18,39 @@ public class StudentController {
         this.studentService = studentService;
     }
 
-    @GetMapping("{id}")
-    public ResponseEntity<Optional<Student>> getStudent(@PathVariable long id) {
-        Optional<Student> student = studentService.findStudent(id);
-        if (student.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(student);
+    @GetMapping("/{id}")
+    public StudentDtoOut getStudent (@PathVariable("id") Long id) {
+        return studentService.findStudent(id);
     }
 
     @GetMapping("/age/{age}")
-    public ResponseEntity<List<Student>> getStudentByAge(@PathVariable int age) {
-        return ResponseEntity.ok(studentService.getAgeStudents(age));
+    public List<StudentDtoOut> getStudentsByAge(@PathVariable int age) {
+        return studentService.findAgeStudents(age);
     }
 
+    @GetMapping("/filter")
+    public List<StudentDtoOut> getStudentsByAgeBetween(@RequestParam(required = false) int min, int max) {
+        return studentService.findByAgeBetween(min, max);
+    }
+
+    @GetMapping("/{id}/faculty")
+    public FacultyDtoOut getFaculty(@PathVariable long id) {
+        return studentService.getFaculty(id);
+    }
     @PostMapping()
-    public ResponseEntity<Student> postStudent(@RequestBody Student student) {
-        Student addadStudent = studentService.createStudent(student);
-        return ResponseEntity.ok(addadStudent);
+    public StudentDtoOut postStudent (@RequestBody StudentDtoIn studentDtoIn) {
+        return studentService.createStudent(studentDtoIn);
     }
 
-    @PutMapping
-    public ResponseEntity<Student> putStudent(@RequestBody Student student) {
-        Student foundStudent = studentService.editStudent(student);
-        if (foundStudent == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-        return ResponseEntity.ok(foundStudent);
+    @PutMapping("/{id}")
+    public StudentDtoOut putStudent(@PathVariable("id") long id,
+                                    @RequestBody StudentDtoIn studentDtoIn) {
+        return studentService.editStudent(id, studentDtoIn);
     }
 
-    @DeleteMapping("{id}")
-    public ResponseEntity<Void> deleteStudent(@PathVariable long id) {
-        studentService.deleteStudent(id);
-        return ResponseEntity.ok().build();
+    @DeleteMapping("/{id}")
+    public StudentDtoOut deleteStudent(@PathVariable("id") Long id) {
+        return studentService.deleteStudent(id);
     }
 }
 
