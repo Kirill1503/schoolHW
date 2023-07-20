@@ -1,10 +1,14 @@
 package ru.hogwarts.school.controller;
 
+import org.apache.catalina.core.ApplicationContext;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ru.hogwarts.school.dto.FacultyDtoIn;
 import ru.hogwarts.school.dto.FacultyDtoOut;
 import ru.hogwarts.school.dto.StudentDtoIn;
 import ru.hogwarts.school.dto.StudentDtoOut;
+import ru.hogwarts.school.entity.Avatar;
 import ru.hogwarts.school.service.StudentService;
 
 import java.util.List;
@@ -19,7 +23,7 @@ public class StudentController {
     }
 
     @GetMapping("/{id}")
-    public StudentDtoOut getStudent (@PathVariable("id") Long id) {
+    public StudentDtoOut getStudent(@PathVariable("id") Long id) {
         return studentService.findStudent(id);
     }
 
@@ -37,8 +41,9 @@ public class StudentController {
     public FacultyDtoOut getFaculty(@PathVariable long id) {
         return studentService.getFaculty(id);
     }
+
     @PostMapping()
-    public StudentDtoOut postStudent (@RequestBody StudentDtoIn studentDtoIn) {
+    public StudentDtoOut postStudent(@RequestBody StudentDtoIn studentDtoIn) {
         return studentService.createStudent(studentDtoIn);
     }
 
@@ -51,6 +56,12 @@ public class StudentController {
     @DeleteMapping("/{id}")
     public StudentDtoOut deleteStudent(@PathVariable("id") Long id) {
         return studentService.deleteStudent(id);
+    }
+
+    @PatchMapping(value = "/{id}/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public StudentDtoOut uploadAvatar(@PathVariable long id,
+                                      @RequestPart("avatar") MultipartFile multipartFile) {
+        return studentService.uploadAvatar(id, multipartFile);
     }
 }
 

@@ -2,9 +2,11 @@ package ru.hogwarts.school.service;
 
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import ru.hogwarts.school.dto.FacultyDtoOut;
 import ru.hogwarts.school.dto.StudentDtoIn;
 import ru.hogwarts.school.dto.StudentDtoOut;
+import ru.hogwarts.school.entity.Avatar;
 import ru.hogwarts.school.entity.Student;
 import ru.hogwarts.school.mapper.FacultyMapper;
 import ru.hogwarts.school.mapper.StudentMapper;
@@ -22,12 +24,17 @@ public class StudentService {
     private final FacultyRepository facultyRepository;
     private final StudentMapper studentMapper;
     private final FacultyMapper facultyMapper;
-
-    public StudentService(StudentRepository studentRepository, FacultyRepository facultyRepository, StudentMapper studentMapper, FacultyMapper facultyMapper) {
+    private final AvatarService avatarService;
+    public StudentService(StudentRepository studentRepository,
+                          FacultyRepository facultyRepository,
+                          StudentMapper studentMapper,
+                          FacultyMapper facultyMapper,
+                          AvatarService avatarService) {
         this.studentRepository = studentRepository;
         this.facultyRepository = facultyRepository;
         this.studentMapper = studentMapper;
         this.facultyMapper = facultyMapper;
+        this.avatarService = avatarService;
     }
 
     public StudentDtoOut createStudent(StudentDtoIn studentDtoIn) {
@@ -80,5 +87,14 @@ public class StudentService {
                 .map(Student::getFaculty)
                 .map(facultyMapper::toDto)
                 .orElseThrow(RuntimeException::new);
+    }
+
+    public StudentDtoOut uploadAvatar(long id, MultipartFile multipartFile) {
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Нет студента с идентификатором  " + id));
+        Avatar avatar = avatarService.create(student, multipartFile);
+        StudentDtoOut studentDtoOut = studentMapper.toDto(student);
+        studentDtoOut.setAvatarUrl("http://localhost:8080/avatars" + avatar.getId() + "/from-db");
+        return studentDtoOut;
     }
 }
